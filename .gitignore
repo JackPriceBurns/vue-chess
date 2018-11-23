@@ -1,0 +1,5 @@
+# Remove jetbrains project folder
+.idea/*
+
+# Remove node modules folder
+node_modules/*

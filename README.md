@@ -1,1 +1,1 @@
-vue-chess
+# VueJS Chess

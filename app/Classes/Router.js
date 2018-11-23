@@ -1,3 +1,5 @@
+const helpers = require('../helpers');
+
 class Router {
     constructor(routeManager) {
         this.routeManager = routeManager;
@@ -12,6 +14,8 @@ class Router {
     }
 
     addRoute(method, path, closure) {
+        path = helpers.stripSlashes(path);
+
         this.routeManager.allRoutes[method].push({path: path, method: closure});
     }
 }

@@ -25,6 +25,7 @@
   "homepage": "https://github.com/JackPriceBurns/vue-chess#readme",
   "dependencies": {
     "lodash": "^4.17.11",
+    "mime-types": "^2.1.21",
     "socket.io": "^2.1.1"
   }
 }

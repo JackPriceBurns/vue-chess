@@ -1,5 +1,5 @@
 const routeManager = new (require('./app/Classes/Managers/RouteManager.js'))();
-const boardManager = new (require('./app/Classes/Managers/BoardManager.js'))();
+const gameManager = new (require('./app/Classes/Managers/GameManager.js'))();
 const helpers = require('./app/helpers');
 const mime = require('mime-types');
 const http = require('http');
@@ -34,10 +34,32 @@ let server = http.createServer((request, response) => {
     }
 });
 
-server.listen(8080);
+server.listen(4000);
 
 const io = require('socket.io').listen(server);
 
-io.sockets.on('connection', (socket) => {
-    socket.emit('load-board', {'board': boardManager.getBoard()});
+io.sockets.on('connection', socket => {
+    socket.on('start-game', () => {
+        let gameId = gameManager.startGame();
+
+        socket.emit('game-started', {gameId});
+    });
+
+    socket.on('join-game', data => {
+        if (!data.gameId) {
+            return;
+        }
+
+        let game = gameManager.getGame(data.gameId);
+
+        if (!game) {
+            socket.emit('game-not-found', 'The requested game was not found!');
+
+            return;
+        }
+
+        socket.join('game-' + game.id);
+
+        io.to('game-' + game.id).emit('load-board', {board: game.game.getBoard()});
+    })
 });

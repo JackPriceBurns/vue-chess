@@ -37,13 +37,11 @@ class BoardManager {
                     white = true
                 }
 
-                row.push({piece: piece, white: white});
+                row.push(piece ? {piece: piece, white: white} : null);
             }
 
             this.board.push(row);
         }
-
-        console.table(this.board);
     }
 
     getBoard() {

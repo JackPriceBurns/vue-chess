@@ -1,6 +1,5 @@
 const helpers = require('../../helpers');
 const Router = require('../Router');
-const View = require('../View');
 const _ = require('lodash');
 
 class RouteManager {

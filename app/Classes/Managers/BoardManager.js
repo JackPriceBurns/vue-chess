@@ -1,9 +1,11 @@
+const Piece = require('../Piece');
+
 class BoardManager {
 
     constructor() {
         this.defaultRow = 'RNBQKBNR';
 
-        this.pieceMap = {
+        this.nameMap = {
             R: 'rook',
             N: 'knight',
             B: 'bishop',
@@ -18,26 +20,24 @@ class BoardManager {
     newBoard() {
         this.board = [];
 
-        for (let x = 0; x < 8; x++) {
+        for (let y = 0; y < 8; y++) {
             let row = [];
 
-            for (let y = 0; y < 8; y++) {
-                let piece = null;
-                let white = false;
+            for (let x = 0; x < 8; x++) {
+                let name = null;
 
                 if (y === 0 || y === 7) {
-                    piece = this.pieceMap[this.defaultRow[x]];
+                    name = this.nameMap[this.defaultRow[x]];
                 }
 
                 if (y === 1 || y === 6) {
-                    piece = this.pieceMap.P;
+                    name = this.nameMap.P;
                 }
 
-                if (y >= 6) {
-                    white = true
-                }
+                let piece = name ? new Piece(name, y <= 5) : null;
+                let location = {x, y};
 
-                row.push(piece ? {piece: piece, white: white} : null);
+                row.push({piece, location});
             }
 
             this.board.push(row);

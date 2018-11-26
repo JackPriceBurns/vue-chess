@@ -12,10 +12,10 @@ class Game {
     }
 
     movePiece(from, to) {
-        let piece = this.board[from.x][from.y];
+        let piece = this.board[from.y][from.x];
 
-        this.board[from.x][from.y] = null;
-        this.board[to.x][to.y] = piece;
+        this.board[from.y][from.x] = {location: from};
+        this.board[to.y][to.x] = {piece: piece.piece, white: piece.white, location: to};
 
         this.whiteTurn = !this.whiteTurn;
     }

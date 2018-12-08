@@ -58,7 +58,7 @@ class Game {
             return null;
         }
 
-        return pieceClass;
+        return new pieceClass(piece, this.getBoard());
     }
 }
 

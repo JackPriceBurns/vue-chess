@@ -7,6 +7,7 @@ class Piece {
         this.name = name;
         this.white = white;
         this.moves = 0;
+        this.recentlyMoved = false;
     }
 }
 

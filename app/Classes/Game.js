@@ -1,4 +1,5 @@
 const boardManager = new (require('./Managers/BoardManager.js'))();
+const _ = require('lodash');
 
 const Pawn = require('./Pieces/Pawn');
 const King = require('./Pieces/King');
@@ -27,6 +28,16 @@ class Game {
         return this.board;
     }
 
+    /**
+     * Move a piece on the board from and to the specified locations
+     *
+     * @param {object} to
+     * @param {number} to.x
+     * @param {number} to.y
+     * @param {object} from
+     * @param {number} from.x
+     * @param {number} from.y
+     */
     movePiece(from, to) {
         let tile = this.board[from.y][from.x];
         let piece = tile.piece;
@@ -37,13 +48,15 @@ class Game {
 
         let pieceClass = this.getPieceClass(piece);
 
-        console.debug(pieceClass);
-
         if ((typeof pieceClass.validMove) !== 'function') {
             return;
         }
 
         if (pieceClass.validMove(from, to)) {
+            this.resetRecentlyMoved();
+
+            tile.piece.recentlyMoved = true;
+
             this.board[from.y][from.x] = {location: from};
             this.board[to.y][to.x] = {piece: tile.piece, location: to};
 
@@ -51,6 +64,12 @@ class Game {
         }
     }
 
+    /**
+     * Get the related javascript object for the piece given.
+     *
+     * @param piece
+     * @returns {*}
+     */
     getPieceClass(piece) {
         let pieceClass;
 
@@ -59,6 +78,21 @@ class Game {
         }
 
         return new pieceClass(piece, this.getBoard());
+    }
+
+    /**
+     * Set recentlyMoved on all pieces on the board to false.
+     */
+    resetRecentlyMoved() {
+        _.each(this.board, rank => {
+            _.each(rank, position => {
+                if (!position.piece) {
+                    return;
+                }
+
+                position.piece.recentlyMoved = false;
+            });
+        });
     }
 }
 

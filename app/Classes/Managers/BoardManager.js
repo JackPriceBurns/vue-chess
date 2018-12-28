@@ -1,7 +1,6 @@
 const Piece = require('../Piece');
 
 class BoardManager {
-
     constructor() {
         this.defaultRow = 'RNBQKBNR';
 
@@ -17,6 +16,9 @@ class BoardManager {
         this.newBoard();
     }
 
+    /**
+     * Generate a new board with all the appropriate pieces.
+     */
     newBoard() {
         this.board = [];
 
@@ -44,6 +46,11 @@ class BoardManager {
         }
     }
 
+    /**
+     * Get the currently stored board.
+     *
+     * @returns {Array}
+     */
     getBoard() {
         return this.board;
     }

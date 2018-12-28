@@ -6,7 +6,7 @@ class Pawn {
 
     validMove(from, to) {
         // If they are moving up or down.
-        if (from.x = to.x) {
+        if (from.x === to.x) {
             // They must be moving the pawn.
             return this.handlePawnMove(from, to);
         }
@@ -21,7 +21,7 @@ class Pawn {
 
     handlePawnMove(from, to) {
         // If you're moving into another piece.
-        if (this.board[to.x][to.y].piece) {
+        if (this.board[to.y][to.x].piece) {
             return false;
         }
 
@@ -34,11 +34,31 @@ class Pawn {
 
         // If the piece has moved one place forward.
         if (Math.abs(yDiff) === 1) {
+            this.handlePromotion(from, to);
+
+            this.piece.moves++;
+
             return true;
         }
 
         // If the piece has moved two places and it is it's first move.
-        return Math.abs(yDiff) === 2 && this.piece.moves === 0;
+        if (Math.abs(yDiff) === 2 && this.piece.moves === 0) {
+            return this.handleDoubleMove(from, to);
+        }
+
+        return false;
+    }
+
+    handleDoubleMove(from, to) {
+        let middlePiece = this.board[(from.y + to.y)/2][to.x].piece;
+
+        if (middlePiece) {
+            return false;
+        }
+
+        this.piece.moves++;
+
+        return true;
     }
 
     isCorrectDirection(yDiff) {
@@ -66,33 +86,90 @@ class Pawn {
             return false;
         }
 
-        let piece = this.board[to.x][to.y].piece;
-
-        // If the pieces colour is the opposite colour to your colour.
-        if (piece && piece.white !== this.piece.white) {
-            return true;
-        }
+        let defendingPiece = this.board[to.y][to.x].piece;
 
         // If there is no piece
-        if (!piece) {
+        if (!defendingPiece) {
             // Check if they are doing an en passant
             return this.isEnPassant(from, to);
+        }
+
+        // If the pieces colour is the opposite colour to your colour.
+        if (defendingPiece.white !== this.piece.white) {
+            this.handlePromotion(from, to);
+
+            this.piece.moves++;
+
+            return true;
         }
 
         return false;
     }
 
     isEnPassant(from, to) {
-        let xDiff = to.x - from.x;
+        // En passant can only happen on ranks 3 and 6
+        if (to.y !== 2 && to.y !== 5) {
+            return false;
+        }
 
-        // todo: finish en passant handling
+        let defendingPosition = this.enPassantDefendingPiece(from, to);
 
-        // If they are moving left
-        if (xDiff > 1) {
+        let defendingPiece = defendingPosition.piece;
 
+        // If there is no defending piece... then there is no attack
+        if (!defendingPiece) {
+            return false;
+        }
+
+        // If the piece isn't a pawn... you can't en passant anything else.
+        if (defendingPiece.name !== 'pawn') {
+            return false;
+        }
+
+        // If the colours are the same... you can't attack your own pieces.
+        if (defendingPiece.white === this.piece.white) {
+            return false;
+        }
+
+        // If the piece doesn't have one move... it can't have double moved.
+        if (defendingPiece.moves !== 1) {
+            return false;
+        }
+
+        // If the piece was the last piece to move.
+        if (defendingPiece.recentlyMoved) {
+            let location = defendingPosition.location;
+
+            // Remove the defending piece.
+            this.board[location.y][location.x].piece = null;
+
+            this.piece.moves++;
+
+            return true;
         }
 
         return false;
+    }
+
+    enPassantDefendingPiece(from, to) {
+        let xDiff = to.x - from.x;
+
+        // If they are moving left
+        if (xDiff > 0) {
+            return this.board[from.y][from.x + 1];
+        }
+
+        return this.board[from.y][from.x - 1];
+    }
+
+    handlePromotion(from, to) {
+        if (to.y !== 0 && to.y !== 7) {
+            return false;
+        }
+
+        this.board[from.y][from.x].piece.name = 'queen';
+
+        return true;
     }
 }
 

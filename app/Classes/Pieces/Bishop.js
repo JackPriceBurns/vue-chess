@@ -12,9 +12,7 @@ class Bishop {
             return false;
         }
 
-        let gradient = yDiff / xDiff;
-
-        if (gradient !== 1 && gradient !== -1) {
+        if (Math.abs(yDiff) !== Math.abs(xDiff)) {
             return false;
         }
 
